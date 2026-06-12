@@ -153,25 +153,39 @@ SSH Diagnostics: ENABLED
 
 ### Degraded scenario
 
-```bash
-./build/5g_agent --config config/degraded_config.json
-```
+    ./build/5g_agent --config config/agent_config.json --scenario degraded
 
 Example output:
 
-```txt
-[WARNING] Telecom health alerts detected: 6
-[WARNING] LOW_SINR - SINR below threshold. Radio quality may be degraded.
-[WARNING] WEAK_RSRP - RSRP below threshold. Coverage may be poor.
-[WARNING] HIGH_PACKET_LOSS - Packet loss above threshold.
-[WARNING] HIGH_LATENCY - Latency above threshold.
-[ERROR] CELL_NOT_ACTIVE - Cell operational status is not ACTIVE.
-[WARNING] SSH_DISABLED [WARNING] - SSH diagnostics are disabled for this node.
-```
+    [INFO] Starting 5G Small Cell Monitoring Agent
+    [INFO] Using config file: config/agent_config.json
+    [INFO] Using scenario: degraded
+
+    [5G SMALL CELL AGENT]
+    Cell ID: AVEIRO-SC-001
+    Technology: 5G
+    CPU Usage: 23.5%
+    Memory Usage: 41.2%
+    Network Interface: eth0
+    Latency: 180 ms
+    Packet Loss: 6.5%
+    RSRP: -118 dBm
+    RSRQ: -19 dB
+    SINR: 5 dB
+    Cell Status: DEGRADED
+    SSH Diagnostics: ENABLED
+
+    [WARNING] Telecom health alerts detected: 5
+    [WARNING] LOW_SINR - SINR below threshold. Radio quality may be degraded.
+    [WARNING] WEAK_RSRP - RSRP below threshold. Coverage may be poor.
+    [WARNING] HIGH_PACKET_LOSS - Packet loss above threshold.
+    [WARNING] HIGH_LATENCY - Latency above threshold.
+    [ERROR] CELL_NOT_ACTIVE - Cell operational status is not ACTIVE.
+    [INFO] Agent execution completed
 
 The degraded scenario intentionally exits with code `2` to indicate that alerts were detected.
 
----
+* * *
 
 ## Python Environment
 
@@ -262,21 +276,24 @@ Example output:
 
 | Job Requirement | Project Implementation |
 |---|---|
-| C/C++ | Core monitoring agent written in C++ |
-| Python | Metric simulation, diagnostics and automated tests |
+| C/C++ | Core monitoring agent and alert evaluation written in C++ |
+| Python | Simulation, testing and SSH diagnostic scripts |
 | Linux platforms | Built and tested in Linux/WSL |
 | Windows environments | Can be executed from Windows through WSL |
-| Embedded software solutions | Simulates an embedded-style monitoring agent for a 5G small cell environment |
+| Embedded software solutions | Simulates an embedded-style monitoring agent |
 | Firmware components | Represents monitoring logic that could run alongside device firmware |
-| Telecommunications networks | Uses telecom-oriented metrics such as RSRP, RSRQ, SINR, latency and packet loss |
-| SSH protocol | Includes SSH diagnostics simulation |
-| Software testing | Includes Python tests with pytest and C++ tests with CTest |
-| Git | Version-controlled and published on GitHub |
-| GitHub Projects | Suitable for issue tracking and task management |
+| Telecommunications networks | Includes 4G/5G-oriented network metrics |
+| SSH protocol | Includes SSH diagnostic simulation and SSH enabled/disabled state |
+| Software testing | Automated Python tests and C++ tests with CTest |
+| Git | Project prepared for Git version control |
+| GitHub Projects | Suitable for issue/task tracking |
 | SonarQube | Includes SonarQube configuration |
 | Kubernetes | Includes optional Kubernetes manifests |
-| VMware | Can be tested in a Linux VM environment |
-| 4G/5G knowledge | Includes healthy and degraded 5G small cell scenarios |
+| VMware | Can be tested inside a Linux VM environment |
+| 4G/5G knowledge | Uses RSRP, RSRQ, SINR, latency and packet loss metrics |
+
+* * *
+
 ## What This Project Demonstrates
 
 This project demonstrates the ability to:
