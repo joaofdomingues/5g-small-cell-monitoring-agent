@@ -1,0 +1,10 @@
+build/
+.venv/
+logs/
+__pycache__/
+*.pyc
+.pytest_cache/
+.vscode/
+.DS_Store
+*.zip
+.env

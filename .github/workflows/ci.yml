@@ -1,0 +1,41 @@
+name: C++ and Python CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ python3-pip python3-venv
+
+      - name: Build C++ agent and C++ tests
+        run: |
+          rm -rf build
+          mkdir build
+          cd build
+          cmake ..
+          cmake --build .
+
+      - name: Run C++ unit tests
+        run: |
+          cd build
+          ctest --output-on-failure
+
+      - name: Run healthy scenario
+        run: ./build/5g_agent --config config/agent_config.json
+
+      - name: Run degraded scenario
+        run: ./build/5g_agent --config config/degraded_config.json || test $? -eq 2
+
+      - name: Run Python tests
+        run: |
+          python3 -m pip install --user pytest
+          python3 -m pytest tests/

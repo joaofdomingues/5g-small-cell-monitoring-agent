@@ -1,0 +1,16 @@
+{
+  "cell_id": "AVEIRO-SC-001",
+  "technology": "5G",
+  "rsrp": -96,
+  "rsrq": -12,
+  "sinr": 18,
+  "latency_ms": 28,
+  "packet_loss": 0.35,
+  "status": "ACTIVE",
+  "ssh_enabled": true,
+  "min_sinr": 10,
+  "min_rsrp": -100,
+  "max_packet_loss": 1.0,
+  "max_latency_ms": 50,
+  "log_file": "logs/agent.log"
+}

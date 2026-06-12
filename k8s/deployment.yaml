@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fiveg-small-cell-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fiveg-small-cell-agent
+  template:
+    metadata:
+      labels:
+        app: fiveg-small-cell-agent
+    spec:
+      containers:
+        - name: agent
+          image: fiveg-small-cell-agent:latest
+          imagePullPolicy: Never

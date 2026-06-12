@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5G Small Cell Monitoring Agent | Professional Demo</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: rgba(15, 23, 42, 0.88);
+      --panel-2: rgba(30, 41, 59, 0.82);
+      --border: rgba(148, 163, 184, 0.18);
+      --text: #e5eefb;
+      --muted: #94a3b8;
+      --primary: #38bdf8;
+      --primary-2: #22d3ee;
+      --good: #34d399;
+      --warn: #fbbf24;
+      --bad: #fb7185;
+      --code: #020617;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.22), transparent 32%),
+        radial-gradient(circle at 85% 15%, rgba(34, 211, 238, 0.12), transparent 28%),
+        linear-gradient(135deg, #020617 0%, var(--bg) 48%, #0f172a 100%);
+      min-height: 100vh;
+    }
+
+    .shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 46px;
+    }
+
+    .hero {
+      border: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(8, 47, 73, 0.72));
+      border-radius: 28px;
+      padding: 34px;
+      box-shadow: 0 30px 90px rgba(0,0,0,0.42);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -130px;
+      top: -140px;
+      border-radius: 50%;
+      background: rgba(56, 189, 248, 0.15);
+      filter: blur(2px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--primary-2);
+      border: 1px solid rgba(34, 211, 238, 0.28);
+      background: rgba(8, 145, 178, 0.12);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 18px 0 10px;
+      font-size: clamp(34px, 6vw, 62px);
+      line-height: .95;
+      letter-spacing: -0.055em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 760px;
+      color: #cbd5e1;
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      color: #03121f;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 14px 34px rgba(56,189,248,.22);
+    }
+
+    .button.secondary {
+      color: var(--text);
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      background: var(--panel);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.22);
+      backdrop-filter: blur(16px);
+    }
+
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+
+    .kpi-value {
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      margin: 8px 0 4px;
+    }
+
+    .kpi-label { color: var(--muted); font-size: 13px; }
+
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+      border: 1px solid rgba(56,189,248,.22);
+      background: rgba(56,189,248,.09);
+      color: #bae6fd;
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .metric {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      color: #cbd5e1;
+    }
+    .metric:last-child { border-bottom: none; }
+    .value { color: var(--good); font-weight: 900; }
+    .warning { color: var(--warn); font-weight: 900; }
+
+    .bar {
+      margin-top: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, .16);
+      overflow: hidden;
+    }
+    .bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), var(--good));
+    }
+
+    pre {
+      margin: 0;
+      background: var(--code);
+      color: #dbeafe;
+      padding: 20px;
+      border-radius: 18px;
+      overflow-x: auto;
+      border: 1px solid rgba(148,163,184,.16);
+      line-height: 1.55;
+      font-size: 13px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+    th, td {
+      padding: 13px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+    th { color: #e0f2fe; background: rgba(2,6,23,.42); }
+    tr:last-child td { border-bottom: none; }
+
+    .status {
+      color: #022c22;
+      background: var(--good);
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .muted { color: var(--muted); line-height: 1.6; }
+
+    footer { margin-top: 22px; color: var(--muted); text-align: center; font-size: 13px; }
+
+    @media (max-width: 880px) {
+      .span-3, .span-4, .span-5, .span-7, .span-8, .span-12 { grid-column: span 12; }
+      .hero { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="eyebrow">Embedded Linux · C++ · 5G Small Cell</div>
+      <h1>5G Small Cell Monitoring Agent</h1>
+      <p>
+        A professional demo for an embedded software developer role. The project simulates a C++ Linux-based
+        monitoring agent for 5G small cell environments, including radio metrics, system health, SSH diagnostics,
+        testing, CI and integration-ready structure.
+      </p>
+      <div class="hero-actions">
+        <a class="button" href="#demo">View live demo data</a>
+        <a class="button secondary" href="#mapping">Job requirements mapping</a>
+      </div>
+    </section>
+
+    <section class="grid" id="demo">
+      <div class="card span-3">
+        <div class="kpi-label">Cell status</div>
+        <div class="kpi-value">ACTIVE</div>
+        <div class="bar"><span style="width: 96%"></span></div>
+      </div>
+      <div class="card span-3">
+        <div class="kpi-label">SINR</div>
+        <div class="kpi-value">22 dB</div>
+        <div class="bar"><span style="width: 82%"></span></div>
+      </div>
+      <div class="card span-3">
+        <div class="kpi-label">Latency</div>
+        <div class="kpi-value">18 ms</div>
+        <div class="bar"><span style="width: 74%"></span></div>
+      </div>
+      <div class="card span-3">
+        <div class="kpi-label">Packet loss</div>
+        <div class="kpi-value">0.3%</div>
+        <div class="bar"><span style="width: 12%"></span></div>
+      </div>
+
+      <div class="card span-5">
+        <h2>Current small cell telemetry</h2>
+        <div class="metric"><span>Cell ID</span><span class="value">AVEIRO-SC-001</span></div>
+        <div class="metric"><span>Technology</span><span class="value">5G NR</span></div>
+        <div class="metric"><span>Network interface</span><span class="value">eth0</span></div>
+        <div class="metric"><span>CPU usage</span><span class="value">23.5%</span></div>
+        <div class="metric"><span>Memory usage</span><span class="value">41.2%</span></div>
+        <div class="metric"><span>SSH diagnostics</span><span class="value">ENABLED</span></div>
+      </div>
+
+      <div class="card span-7">
+        <h2>Terminal output generated by the C++ agent</h2>
+        <pre>[5G SMALL CELL AGENT]
+
+Cell ID: AVEIRO-SC-001
+Technology: 5G
+CPU Usage: 23.5%
+Memory Usage: 41.2%
+Network Interface: eth0
+Latency: 18 ms
+Packet Loss: 0.3%
+RSRP: -86 dBm
+RSRQ: -11 dB
+SINR: 22 dB
+Cell Status: ACTIVE
+SSH Diagnostics: ENABLED
+Alert Engine: HEALTHY
+
+Health evaluation: OK
+Integration readiness: READY</pre>
+      </div>
+
+      <div class="card span-4">
+        <h2>Radio metrics</h2>
+        <div class="metric"><span>RSRP</span><span class="value">-86 dBm</span></div>
+        <div class="metric"><span>RSRQ</span><span class="value">-11 dB</span></div>
+        <div class="metric"><span>SINR</span><span class="value">22 dB</span></div>
+        <div class="metric"><span>Packet loss</span><span class="value">0.3%</span></div>
+      </div>
+
+      <div class="card span-8" id="mapping">
+        <h2>Mapping to the job requirements</h2>
+        <table>
+          <thead><tr><th>Requirement</th><th>Implementation in the project</th></tr></thead>
+          <tbody>
+            <tr><td>C/C++</td><td>Core monitoring agent written in C++</td></tr>
+            <tr><td>Python</td><td>Simulation and test scripts</td></tr>
+            <tr><td>Linux / Windows</td><td>Runs on Linux and can be tested from Windows using WSL</td></tr>
+            <tr><td>Telecommunications networks</td><td>Simulated 5G KPIs: RSRP, RSRQ, SINR, latency and packet loss</td></tr>
+            <tr><td>SSH protocol</td><td>Remote diagnostics script and SSH health-check concept</td></tr>
+            <tr><td>Testing</td><td>Python tests + C++ CTest validating telecom thresholds</td></tr>
+            <tr><td>SonarQube / Kubernetes / GitHub</td><td>Repository includes config files for CI, static analysis and deployment</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card span-12">
+        <h2>Technology stack demonstrated</h2>
+        <div class="pill-row">
+          <span class="pill">C++</span><span class="pill">Python</span><span class="pill">Linux</span><span class="pill">WSL</span>
+          <span class="pill">SSH</span><span class="pill">5G Metrics</span><span class="pill">CMake</span><span class="pill">pytest</span>
+          <span class="pill">GitHub Actions</span><span class="pill">SonarQube</span><span class="pill">Docker</span><span class="pill">Kubernetes</span>
+        </div>
+      </div>
+    </section>
+
+    <footer>Professional demo page · 5G Small Cell Monitoring Agent</footer>
+  </main>
+</body>
+</html>
