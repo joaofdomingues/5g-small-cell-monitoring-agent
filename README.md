@@ -161,11 +161,11 @@ Example output:
 
 ```txt
 [WARNING] Telecom health alerts detected: 6
-[WARNING] LOW_SINR [WARNING] - SINR below threshold. Radio quality may be degraded.
-[WARNING] WEAK_RSRP [WARNING] - RSRP below threshold. Coverage may be poor.
-[WARNING] HIGH_PACKET_LOSS [WARNING] - Packet loss above threshold.
-[WARNING] HIGH_LATENCY [WARNING] - Latency above threshold.
-[ERROR] CELL_NOT_ACTIVE [CRITICAL] - Cell operational status is not ACTIVE.
+[WARNING] LOW_SINR - SINR below threshold. Radio quality may be degraded.
+[WARNING] WEAK_RSRP - RSRP below threshold. Coverage may be poor.
+[WARNING] HIGH_PACKET_LOSS - Packet loss above threshold.
+[WARNING] HIGH_LATENCY - Latency above threshold.
+[ERROR] CELL_NOT_ACTIVE - Cell operational status is not ACTIVE.
 [WARNING] SSH_DISABLED [WARNING] - SSH diagnostics are disabled for this node.
 ```
 
@@ -262,24 +262,21 @@ Example output:
 
 | Job Requirement | Project Implementation |
 |---|---|
-| C/C++ | Core monitoring agent and alert evaluation written in C++ |
-| Python | Simulation, testing and SSH diagnostic scripts |
+| C/C++ | Core monitoring agent written in C++ |
+| Python | Metric simulation, diagnostics and automated tests |
 | Linux platforms | Built and tested in Linux/WSL |
 | Windows environments | Can be executed from Windows through WSL |
-| Embedded software solutions | Simulates an embedded-style monitoring agent |
+| Embedded software solutions | Simulates an embedded-style monitoring agent for a 5G small cell environment |
 | Firmware components | Represents monitoring logic that could run alongside device firmware |
-| Telecommunications networks | Includes 4G/5G-oriented network metrics |
-| SSH protocol | Includes SSH diagnostic simulation and SSH enabled/disabled state |
-| Software testing | Automated Python tests and C++ tests with CTest |
-| Git | Project prepared for Git version control |
-| GitHub Projects | Suitable for issue/task tracking |
+| Telecommunications networks | Uses telecom-oriented metrics such as RSRP, RSRQ, SINR, latency and packet loss |
+| SSH protocol | Includes SSH diagnostics simulation |
+| Software testing | Includes Python tests with pytest and C++ tests with CTest |
+| Git | Version-controlled and published on GitHub |
+| GitHub Projects | Suitable for issue tracking and task management |
 | SonarQube | Includes SonarQube configuration |
 | Kubernetes | Includes optional Kubernetes manifests |
-| VMware | Can be tested inside a Linux VM environment |
-| 4G/5G knowledge | Uses RSRP, RSRQ, SINR, latency and packet loss metrics |
-
----
-
+| VMware | Can be tested in a Linux VM environment |
+| 4G/5G knowledge | Includes healthy and degraded 5G small cell scenarios |
 ## What This Project Demonstrates
 
 This project demonstrates the ability to:
