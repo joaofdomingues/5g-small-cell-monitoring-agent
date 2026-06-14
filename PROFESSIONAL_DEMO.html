@@ -1,350 +1,548 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>5G Small Cell Monitoring Agent | Professional Demo</title>
-  <style>
-    :root {
-      --bg: #07111f;
-      --panel: rgba(15, 23, 42, 0.88);
-      --panel-2: rgba(30, 41, 59, 0.82);
-      --border: rgba(148, 163, 184, 0.18);
-      --text: #e5eefb;
-      --muted: #94a3b8;
-      --primary: #38bdf8;
-      --primary-2: #22d3ee;
-      --good: #34d399;
-      --warn: #fbbf24;
-      --bad: #fb7185;
-      --code: #020617;
-    }
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>5G Small Cell Monitoring Agent · Demo v3</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700;800;900&display=swap');
+:root{
+  --bg:#04090f;--s1:#08111f;--s2:#0d1a2e;
+  --b1:rgba(56,189,248,.11);--b2:rgba(56,189,248,.24);
+  --tx:#deeafb;--mu:#64748b;--di:#94a3b8;
+  --cy:#38bdf8;--cy2:#7dd3fc;--gr:#34d399;--gr2:#6ee7b7;
+  --am:#fbbf24;--re:#fb7185;--pu:#a78bfa;
+  --mo:'JetBrains Mono',monospace;--sa:'Inter',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sa);background:var(--bg);color:var(--tx);overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 70% 50% at 10% 0%,rgba(56,189,248,.08) 0%,transparent 65%),
+             radial-gradient(ellipse 40% 40% at 90% 90%,rgba(99,102,241,.05) 0%,transparent 65%);}
+.sh{max-width:1140px;margin:0 auto;padding:0 24px 80px;position:relative;z-index:1}
 
-    * { box-sizing: border-box; }
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:18px 0;
+  border-bottom:1px solid var(--b1);position:sticky;top:0;
+  background:rgba(4,9,15,.92);backdrop-filter:blur(20px);z-index:100}
+.nav-id{font-family:var(--mo);font-size:12px;color:var(--cy);display:flex;align-items:center;gap:10px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--gr);box-shadow:0 0 10px var(--gr);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.nav-tags{display:flex;gap:6px}
+.tag{font-size:10px;font-weight:700;padding:4px 10px;border-radius:8px;
+  background:rgba(56,189,248,.07);border:1px solid var(--b1);color:var(--cy2);
+  letter-spacing:.05em;text-transform:uppercase}
 
-    body {
-      margin: 0;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 15% 10%, rgba(56, 189, 248, 0.22), transparent 32%),
-        radial-gradient(circle at 85% 15%, rgba(34, 211, 238, 0.12), transparent 28%),
-        linear-gradient(135deg, #020617 0%, var(--bg) 48%, #0f172a 100%);
-      min-height: 100vh;
-    }
+/* HERO */
+.hero{padding:64px 0 48px;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:20px;
+  background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.18);
+  color:var(--cy2);font-size:11px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;padding:6px 12px;border-radius:999px}
+h1{font-size:clamp(30px,5vw,56px);font-weight:900;line-height:.93;letter-spacing:-.04em;margin-bottom:20px}
+h1 em{font-style:normal;color:var(--cy)}
+.hero-desc{font-size:15px;color:var(--di);line-height:1.72;margin-bottom:28px}
+.stats{display:flex;gap:24px;flex-wrap:wrap}
+.sv{font-size:24px;font-weight:900;letter-spacing:-.04em;color:var(--cy)}
+.sl{font-size:10px;color:var(--mu);margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
 
-    .shell {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 28px 18px 46px;
-    }
+/* TERMINAL */
+.term{background:#020810;border:1px solid var(--b2);border-radius:18px;overflow:hidden;
+  box-shadow:0 32px 64px rgba(0,0,0,.55)}
+.tbar{background:var(--s2);padding:11px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--b1)}
+.td{width:12px;height:12px;border-radius:50%}
+.td.r{background:#ff5f57}.td.y{background:#febc2e}.td.g{background:#28c840}
+.tlbl{font-family:var(--mo);font-size:11px;color:var(--mu);margin:0 auto}
+.tbody{padding:16px 18px;font-family:var(--mo);font-size:11.5px;line-height:1.75;min-height:260px}
+.cur{display:inline-block;width:8px;height:14px;background:var(--cy);animation:blink .85s infinite;vertical-align:text-bottom}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
 
-    .hero {
-      border: 1px solid var(--border);
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(8, 47, 73, 0.72));
-      border-radius: 28px;
-      padding: 34px;
-      box-shadow: 0 30px 90px rgba(0,0,0,0.42);
-      position: relative;
-      overflow: hidden;
-    }
+/* SECTION */
+.sec{margin-top:60px}
+.shdr{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.stag{font-family:var(--mo);font-size:10px;font-weight:700;color:var(--cy);
+  background:rgba(56,189,248,.07);border:1px solid var(--b1);
+  padding:4px 10px;border-radius:6px;letter-spacing:.06em;text-transform:uppercase}
+.shdr h2{font-size:21px;font-weight:800;letter-spacing:-.03em}
+.sline{flex:1;height:1px;background:var(--b1)}
 
-    .hero::after {
-      content: "";
-      position: absolute;
-      width: 360px;
-      height: 360px;
-      right: -130px;
-      top: -140px;
-      border-radius: 50%;
-      background: rgba(56, 189, 248, 0.15);
-      filter: blur(2px);
-    }
+/* GRID */
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--s1);border:1px solid var(--b1);border-radius:16px;padding:20px;
+  position:relative;overflow:hidden;transition:border-color .2s,transform .15s}
+.card:hover{border-color:var(--b2);transform:translateY(-2px)}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:16px 16px 0 0;
+  background:linear-gradient(90deg,var(--cy),var(--cy2))}
+.card-ico{font-size:22px;margin-bottom:10px}
+.card-name{font-size:13px;font-weight:800;margin-bottom:6px}
+.card-file{font-family:var(--mo);font-size:10px;color:var(--cy2);margin-bottom:6px}
+.card-desc{font-size:12px;color:var(--di);line-height:1.6}
 
-    .eyebrow {
-      display: inline-flex;
-      gap: 8px;
-      align-items: center;
-      color: var(--primary-2);
-      border: 1px solid rgba(34, 211, 238, 0.28);
-      background: rgba(8, 145, 178, 0.12);
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-    }
+/* HIGHLIGHT BOXES */
+.highlight{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.16);
+  border-radius:14px;padding:18px 20px;margin-bottom:12px}
+.hl-title{font-size:12px;font-weight:800;color:var(--cy2);margin-bottom:8px;
+  text-transform:uppercase;letter-spacing:.05em;font-family:var(--mo)}
+.hl-body{font-size:13px;color:var(--di);line-height:1.65}
+.hl-body code{font-family:var(--mo);color:var(--cy2);font-size:11px;
+  background:rgba(56,189,248,.1);padding:1px 5px;border-radius:4px}
 
-    h1 {
-      margin: 18px 0 10px;
-      font-size: clamp(34px, 6vw, 62px);
-      line-height: .95;
-      letter-spacing: -0.055em;
-    }
+/* CODE */
+.cw{background:#020810;border:1px solid var(--b1);border-radius:14px;overflow:hidden;margin-bottom:12px}
+.ch{background:var(--s2);padding:9px 14px;font-family:var(--mo);font-size:10px;
+  color:var(--mu);border-bottom:1px solid var(--b1);
+  display:flex;justify-content:space-between;align-items:center}
+.cl{color:var(--cy2);font-weight:700;font-size:10px}
+pre{margin:0;padding:14px 16px;font-family:var(--mo);font-size:11.5px;line-height:1.65;overflow-x:auto;color:#cbd5e1}
+.kw{color:#c084fc}.ty{color:#67e8f9}.fn{color:#fde68a}.st{color:#86efac}
+.cm{color:#3d5565;font-style:italic}.nu{color:#fb923c}
 
-    .hero p {
-      margin: 0;
-      max-width: 760px;
-      color: #cbd5e1;
-      font-size: 18px;
-      line-height: 1.65;
-    }
+/* SCENARIO TOGGLE */
+.sc-btns{display:flex;gap:8px;margin-bottom:18px}
+.sb{padding:9px 18px;border-radius:10px;font-size:12px;font-weight:700;
+  cursor:pointer;border:1px solid var(--b1);background:var(--s1);color:var(--di);transition:all .2s}
+.sb.ok{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.3);color:var(--gr)}
+.sb.bad{background:rgba(251,113,133,.1);border-color:rgba(251,113,133,.3);color:var(--re)}
+.sp{display:none}.sp.on{display:block}
 
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 24px;
-    }
+/* METRICS */
+.mrow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.mc{background:var(--s1);border:1px solid var(--b1);border-radius:14px;padding:16px;text-align:center}
+.mv{font-size:24px;font-weight:900;letter-spacing:-.04em}
+.ml{font-size:10px;color:var(--mu);margin-top:4px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.mb{height:4px;border-radius:99px;background:rgba(255,255,255,.06);margin-top:8px;overflow:hidden}
+.mf{height:100%;border-radius:inherit;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
 
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 12px 16px;
-      border-radius: 14px;
-      font-weight: 800;
-      text-decoration: none;
-      color: #03121f;
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      box-shadow: 0 14px 34px rgba(56,189,248,.22);
-    }
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th,.tbl td{padding:10px 12px;font-size:12px;text-align:left;border-bottom:1px solid var(--b1)}
+.tbl th{font-size:10px;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.tbl tr:last-child td{border-bottom:none}
+.ok-b{color:#022c22;background:var(--gr);padding:2px 7px;border-radius:5px;font-size:10px;font-weight:900;font-family:var(--mo)}
+.wa-b{color:#451a03;background:var(--am);padding:2px 7px;border-radius:5px;font-size:10px;font-weight:900;font-family:var(--mo)}
+.cr-b{color:#fff1f2;background:var(--re);padding:2px 7px;border-radius:5px;font-size:10px;font-weight:900;font-family:var(--mo)}
 
-    .button.secondary {
-      color: var(--text);
-      background: rgba(15, 23, 42, 0.72);
-      border: 1px solid var(--border);
-      box-shadow: none;
-    }
+/* FLOW */
+.flow{display:flex;align-items:flex-start}
+.fs{flex:1;padding:18px 14px;position:relative;background:var(--s1);
+  border:1px solid var(--b1);border-right:none;transition:background .2s}
+.fs:first-child{border-radius:14px 0 0 14px}
+.fs:last-child{border-right:1px solid var(--b1);border-radius:0 14px 14px 0}
+.fs:hover{background:var(--s2)}
+.fs::after{content:'›';position:absolute;right:-10px;top:50%;transform:translateY(-50%);
+  color:var(--cy);font-size:22px;font-weight:900;z-index:2}
+.fs:last-child::after{display:none}
+.fn2{font-family:var(--mo);font-size:10px;color:var(--cy);font-weight:700;margin-bottom:7px}
+.ft{font-size:12px;font-weight:700;margin-bottom:4px}
+.fd{font-size:11px;color:var(--di);line-height:1.55}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap: 18px;
-      margin-top: 18px;
-    }
+/* PIPELINE */
+.pipe{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ps{display:flex;align-items:center;gap:7px;background:var(--s2);
+  border:1px solid rgba(52,211,153,.22);border-radius:10px;
+  padding:9px 14px;font-size:12px;font-weight:600;color:var(--gr)}
+.pa{color:var(--mu);font-size:16px}
 
-    .card {
-      border: 1px solid var(--border);
-      background: var(--panel);
-      border-radius: 22px;
-      padding: 22px;
-      box-shadow: 0 20px 50px rgba(0,0,0,.22);
-      backdrop-filter: blur(16px);
-    }
+/* TOOLS */
+.tools{display:flex;flex-wrap:wrap;gap:10px}
+.tool{display:flex;align-items:center;gap:8px;background:var(--s1);
+  border:1px solid var(--b1);border-radius:10px;padding:8px 14px;
+  font-size:12px;font-weight:600;color:var(--di);transition:border-color .2s,color .2s}
+.tool:hover{border-color:var(--b2);color:var(--tx)}
 
-    .span-3 { grid-column: span 3; }
-    .span-4 { grid-column: span 4; }
-    .span-5 { grid-column: span 5; }
-    .span-7 { grid-column: span 7; }
-    .span-8 { grid-column: span 8; }
-    .span-12 { grid-column: span 12; }
+/* FOOTER */
+footer{margin-top:64px;padding-top:24px;border-top:1px solid var(--b1);
+  display:flex;justify-content:space-between;align-items:center;color:var(--mu);font-size:12px}
 
-    h2 {
-      margin: 0 0 16px;
-      font-size: 18px;
-      letter-spacing: -0.02em;
-    }
-
-    .kpi-value {
-      font-size: 34px;
-      font-weight: 900;
-      letter-spacing: -0.04em;
-      margin: 8px 0 4px;
-    }
-
-    .kpi-label { color: var(--muted); font-size: 13px; }
-
-    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
-    .pill {
-      border: 1px solid rgba(56,189,248,.22);
-      background: rgba(56,189,248,.09);
-      color: #bae6fd;
-      padding: 8px 10px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .metric {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 12px;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-      color: #cbd5e1;
-    }
-    .metric:last-child { border-bottom: none; }
-    .value { color: var(--good); font-weight: 900; }
-    .warning { color: var(--warn); font-weight: 900; }
-
-    .bar {
-      margin-top: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(148, 163, 184, .16);
-      overflow: hidden;
-    }
-    .bar > span {
-      display: block;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--primary), var(--good));
-    }
-
-    pre {
-      margin: 0;
-      background: var(--code);
-      color: #dbeafe;
-      padding: 20px;
-      border-radius: 18px;
-      overflow-x: auto;
-      border: 1px solid rgba(148,163,184,.16);
-      line-height: 1.55;
-      font-size: 13px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      overflow: hidden;
-      border-radius: 16px;
-    }
-    th, td {
-      padding: 13px 12px;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-      color: #cbd5e1;
-      font-size: 14px;
-    }
-    th { color: #e0f2fe; background: rgba(2,6,23,.42); }
-    tr:last-child td { border-bottom: none; }
-
-    .status {
-      color: #022c22;
-      background: var(--good);
-      padding: 5px 9px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 900;
-    }
-
-    .muted { color: var(--muted); line-height: 1.6; }
-
-    footer { margin-top: 22px; color: var(--muted); text-align: center; font-size: 13px; }
-
-    @media (max-width: 880px) {
-      .span-3, .span-4, .span-5, .span-7, .span-8, .span-12 { grid-column: span 12; }
-      .hero { padding: 24px; }
-    }
-  </style>
+@media(max-width:900px){
+  .hero,.g2{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr 1fr}
+  .mrow{grid-template-columns:1fr 1fr}
+  .flow{flex-direction:column;gap:4px}
+  .fs{border-right:1px solid var(--b1)!important;border-radius:10px!important}
+  .fs::after{content:'↓';right:auto;left:50%;top:auto;bottom:-14px;transform:translateX(-50%)}
+  .fs:last-child::after{display:none}
+}
+@media(max-width:600px){.g3{grid-template-columns:1fr}.mrow{grid-template-columns:1fr 1fr}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
 </head>
 <body>
-  <main class="shell">
-    <section class="hero">
-      <div class="eyebrow">Embedded Linux · C++ · 5G Small Cell</div>
-      <h1>5G Small Cell Monitoring Agent</h1>
-      <p>
-        A professional demo for an embedded software developer role. The project simulates a C++ Linux-based
-        monitoring agent for 5G small cell environments, including radio metrics, system health, SSH diagnostics,
-        testing, CI and integration-ready structure.
-      </p>
-      <div class="hero-actions">
-        <a class="button" href="#demo">View live demo data</a>
-        <a class="button secondary" href="#mapping">Job requirements mapping</a>
-      </div>
-    </section>
+<div class="sh">
 
-    <section class="grid" id="demo">
-      <div class="card span-3">
-        <div class="kpi-label">Cell status</div>
-        <div class="kpi-value">ACTIVE</div>
-        <div class="bar"><span style="width: 96%"></span></div>
-      </div>
-      <div class="card span-3">
-        <div class="kpi-label">SINR</div>
-        <div class="kpi-value">22 dB</div>
-        <div class="bar"><span style="width: 82%"></span></div>
-      </div>
-      <div class="card span-3">
-        <div class="kpi-label">Latency</div>
-        <div class="kpi-value">18 ms</div>
-        <div class="bar"><span style="width: 74%"></span></div>
-      </div>
-      <div class="card span-3">
-        <div class="kpi-label">Packet loss</div>
-        <div class="kpi-value">0.3%</div>
-        <div class="bar"><span style="width: 12%"></span></div>
-      </div>
+<!-- NAV -->
+<nav>
+  <div class="nav-id"><span class="dot"></span>5g-small-cell-monitoring-agent v3</div>
+  <div class="nav-tags">
+    <span class="tag">C++17</span><span class="tag">Threads</span>
+    <span class="tag">RAII</span><span class="tag">SIGTERM</span><span class="tag">5G NR</span>
+  </div>
+</nav>
 
-      <div class="card span-5">
-        <h2>Current small cell telemetry</h2>
-        <div class="metric"><span>Cell ID</span><span class="value">AVEIRO-SC-001</span></div>
-        <div class="metric"><span>Technology</span><span class="value">5G NR</span></div>
-        <div class="metric"><span>Network interface</span><span class="value">eth0</span></div>
-        <div class="metric"><span>CPU usage</span><span class="value">23.5%</span></div>
-        <div class="metric"><span>Memory usage</span><span class="value">41.2%</span></div>
-        <div class="metric"><span>SSH diagnostics</span><span class="value">ENABLED</span></div>
+<!-- HERO -->
+<section class="hero">
+  <div>
+    <div class="eyebrow">Embedded Software · 5G Small Cell · Aveiro</div>
+    <h1>5G Small Cell<br><em>Monitoring</em><br>Agent v3</h1>
+    <p class="hero-desc">
+      Agente C++17 de produção — loop contínuo com SIGTERM graceful shutdown,
+      RAII com <code style="font-family:var(--mo);color:var(--cy2);font-size:13px">std::unique_ptr</code>,
+      leitura live do kernel via <code style="font-family:var(--mo);color:var(--cy2);font-size:13px">/proc</code>,
+      HAL stub com register map e GPIO para embedded ARM64.
+    </p>
+    <div class="stats">
+      <div><div class="sv">7</div><div class="sl">Módulos C++</div></div>
+      <div><div class="sv">11</div><div class="sl">Testes C++</div></div>
+      <div><div class="sv">15</div><div class="sl">Testes Python</div></div>
+      <div><div class="sv">0→∞</div><div class="sl">Poll loops</div></div>
+    </div>
+  </div>
+  <div class="term">
+    <div class="tbar">
+      <span class="td r"></span><span class="td y"></span><span class="td g"></span>
+      <span class="tlbl">5g_agent — continuous mode</span>
+    </div>
+    <div class="tbody" id="heroTerm"></div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="sec">
+  <div class="shdr"><span class="stag">01</span><h2>Arquitetura — novidades v3</h2><span class="sline"></span></div>
+  <div class="g3">
+    <div class="card">
+      <div class="card-ico">🔄</div>
+      <div class="card-name">AgentLoop</div>
+      <div class="card-file">src/agent_loop.cpp</div>
+      <div class="card-desc">Loop contínuo com poll interval configurável. SIGTERM/SIGINT handler com <code style="font-family:var(--mo);font-size:10px;color:var(--cy2)">std::atomic&lt;bool&gt;</code> async-signal-safe. Sleep em slices de 100ms para resposta rápida ao sinal.</div>
+    </div>
+    <div class="card">
+      <div class="card-ico">🧠</div>
+      <div class="card-name">RAII em main.cpp</div>
+      <div class="card-file">src/main.cpp</div>
+      <div class="card-desc"><code style="font-family:var(--mo);font-size:10px;color:var(--cy2)">std::make_unique&lt;MetricsCollector&gt;</code> e <code style="font-family:var(--mo);font-size:10px;color:var(--cy2)">std::make_unique&lt;SSHDiagnostics&gt;</code>. Destruição determinística garantida. Tick lambda por referência.</div>
+    </div>
+    <div class="card">
+      <div class="card-ico">🔩</div>
+      <div class="card-name">HAL / Firmware Stub</div>
+      <div class="card-file">src/firmware_stub.h</div>
+      <div class="card-desc">Register map com endereços reais (REG_BASE_RADIO, SINR_RAW, RSRP_RAW). GPIO defines. <code style="font-family:var(--mo);font-size:10px;color:var(--cy2)">#ifdef EMBEDDED_HW</code> para compilação cruzada ARM64.</div>
+    </div>
+    <div class="card">
+      <div class="card-ico">📊</div>
+      <div class="card-name">MetricsCollector</div>
+      <div class="card-file">src/metrics_collector.cpp</div>
+      <div class="card-desc">CPU via delta de <code style="font-family:var(--mo);font-size:10px;color:var(--cy2)">/proc/stat</code> (100ms). Memória via <code style="font-family:var(--mo);font-size:10px;color:var(--cy2)">/proc/meminfo</code>. Interface de rede via <code style="font-family:var(--mo);font-size:10px;color:var(--cy2)">/proc/net/dev</code>. Fallback <code style="font-family:var(--mo);font-size:10px;color:var(--cy2)">#ifdef _WIN32</code>.</div>
+    </div>
+    <div class="card">
+      <div class="card-ico">📡</div>
+      <div class="card-name">NetworkMonitor</div>
+      <div class="card-file">src/network_monitor.cpp</div>
+      <div class="card-desc">Parse JSON manual com std::regex. Avaliação de SINR, RSRP, packet loss, latência, cell status e SSH. 6 tipos de alerta com severidade.</div>
+    </div>
+    <div class="card">
+      <div class="card-ico">🔐</div>
+      <div class="card-name">SSHDiagnostics</div>
+      <div class="card-file">src/ssh_diagnostics.cpp</div>
+      <div class="card-desc">Execução via <code style="font-family:var(--mo);font-size:10px;color:var(--cy2)">popen/pclose</code>. Modo local (CI/dry-run) e remoto (BatchMode, ConnectTimeout). 4 comandos de diagnóstico estruturados.</div>
+    </div>
+  </div>
+</section>
+
+<!-- NEW: SIGTERM + LOOP + RAII highlight -->
+<section class="sec">
+  <div class="shdr"><span class="stag">02</span><h2>Produção: loop, SIGTERM e RAII</h2><span class="sline"></span></div>
+  <div class="g2">
+    <div>
+      <div class="highlight">
+        <div class="hl-title">AgentLoop — Graceful Shutdown</div>
+        <div class="hl-body">O handler de <code>SIGTERM</code>/<code>SIGINT</code> é <em>async-signal-safe</em>: usa apenas <code>std::atomic::store</code> com <code>memory_order_relaxed</code>. O loop dorme em fatias de 100ms para reagir rapidamente ao sinal sem busy-wait.</div>
       </div>
+      <div class="cw">
+        <div class="ch"><span>src/agent_loop.cpp — signal handler</span><span class="cl">C++17</span></div>
+        <pre><span class="kw">static</span> <span class="ty">void</span> <span class="fn">handleSignal</span>(<span class="ty">int</span>) {
+  <span class="cm">// std::atomic::store é async-signal-safe.</span>
+  g_shutdown.<span class="fn">store</span>(<span class="kw">true</span>,
+    std::memory_order_relaxed);
+}
 
-      <div class="card span-7">
-        <h2>Terminal output generated by the C++ agent</h2>
-        <pre>[5G SMALL CELL AGENT]
-
-Cell ID: AVEIRO-SC-001
-Technology: 5G
-CPU Usage: 23.5%
-Memory Usage: 41.2%
-Network Interface: eth0
-Latency: 18 ms
-Packet Loss: 0.3%
-RSRP: -86 dBm
-RSRQ: -11 dB
-SINR: 22 dB
-Cell Status: ACTIVE
-SSH Diagnostics: ENABLED
-Alert Engine: HEALTHY
-
-Health evaluation: OK
-Integration readiness: READY</pre>
+<span class="kw">void</span> AgentLoop::<span class="fn">installSignalHandlers</span>() {
+  std::<span class="fn">signal</span>(SIGTERM, handleSignal);
+  std::<span class="fn">signal</span>(SIGINT,  handleSignal);
+}</pre>
       </div>
+      <div class="cw">
+        <div class="ch"><span>src/agent_loop.cpp — poll loop</span><span class="cl">C++17</span></div>
+        <pre><span class="kw">while</span> (!g_shutdown.<span class="fn">load</span>(
+         std::memory_order_relaxed)) {
+  ++cycleCount;
+  lastAlertCount = <span class="fn">tick_</span>();
 
-      <div class="card span-4">
-        <h2>Radio metrics</h2>
-        <div class="metric"><span>RSRP</span><span class="value">-86 dBm</span></div>
-        <div class="metric"><span>RSRQ</span><span class="value">-11 dB</span></div>
-        <div class="metric"><span>SINR</span><span class="value">22 dB</span></div>
-        <div class="metric"><span>Packet loss</span><span class="value">0.3%</span></div>
+  <span class="cm">// Slices de 100ms → reage rapidamente</span>
+  <span class="kw">const</span> <span class="ty">int</span> slices = config_.pollIntervalSec * <span class="nu">10</span>;
+  <span class="kw">for</span> (<span class="ty">int</span> i = <span class="nu">0</span>; i < slices; ++i) {
+    <span class="kw">if</span> (g_shutdown.<span class="fn">load</span>()) <span class="kw">break</span>;
+    std::this_thread::<span class="fn">sleep_for</span>(
+      std::chrono::<span class="fn">milliseconds</span>(<span class="nu">100</span>));
+  }
+}</pre>
       </div>
-
-      <div class="card span-8" id="mapping">
-        <h2>Mapping to the job requirements</h2>
-        <table>
-          <thead><tr><th>Requirement</th><th>Implementation in the project</th></tr></thead>
-          <tbody>
-            <tr><td>C/C++</td><td>Core monitoring agent written in C++</td></tr>
-            <tr><td>Python</td><td>Simulation and test scripts</td></tr>
-            <tr><td>Linux / Windows</td><td>Runs on Linux and can be tested from Windows using WSL</td></tr>
-            <tr><td>Telecommunications networks</td><td>Simulated 5G KPIs: RSRP, RSRQ, SINR, latency and packet loss</td></tr>
-            <tr><td>SSH protocol</td><td>Remote diagnostics script and SSH health-check concept</td></tr>
-            <tr><td>Testing</td><td>Python tests + C++ CTest validating telecom thresholds</td></tr>
-            <tr><td>SonarQube / Kubernetes / GitHub</td><td>Repository includes config files for CI, static analysis and deployment</td></tr>
-          </tbody>
-        </table>
+    </div>
+    <div>
+      <div class="highlight">
+        <div class="hl-title">RAII — std::unique_ptr em main</div>
+        <div class="hl-body">Todos os objetos com estado são alocados com <code>std::make_unique</code>. O destructor do <code>AgentLoop</code> chama <code>stop()</code> automaticamente. Zero raw pointers no código de produção.</div>
       </div>
+      <div class="cw">
+        <div class="ch"><span>src/main.cpp — RAII ownership</span><span class="cl">C++17</span></div>
+        <pre><span class="cm">// Ownership explícita via unique_ptr</span>
+<span class="kw">auto</span> collector =
+  std::<span class="fn">make_unique</span>&lt;MetricsCollector&gt;();
+<span class="kw">auto</span> ssh =
+  std::<span class="fn">make_unique</span>&lt;SSHDiagnostics&gt;(
+    config.metrics.sshEnabled);
 
-      <div class="card span-12">
-        <h2>Technology stack demonstrated</h2>
-        <div class="pill-row">
-          <span class="pill">C++</span><span class="pill">Python</span><span class="pill">Linux</span><span class="pill">WSL</span>
-          <span class="pill">SSH</span><span class="pill">5G Metrics</span><span class="pill">CMake</span><span class="pill">pytest</span>
-          <span class="pill">GitHub Actions</span><span class="pill">SonarQube</span><span class="pill">Docker</span><span class="pill">Kubernetes</span>
+<span class="cm">// Tick lambda captura por referência</span>
+<span class="kw">auto</span> tick = [&]() <span class="kw">-></span> <span class="ty">int</span> {
+  <span class="kw">return</span> <span class="fn">runTick</span>(config,
+                   *collector,
+                    monitor,
+                   *ssh);
+};
+
+AgentLoop <span class="fn">loop</span>(config, tick);
+<span class="cm">// ~AgentLoop() → stop() automático</span></pre>
+      </div>
+      <div class="highlight" style="margin-top:0">
+        <div class="hl-title">Firmware HAL Stub — ARM64</div>
+        <div class="hl-body">Register map com endereços reais do SoC. GPIO pins para LEDs de estado. <code>#ifdef EMBEDDED_HW</code> separa host e target. CMakeLists suporta <code>-DTARGET_ARCH=aarch64</code> com toolchain ARM.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCENARIOS -->
+<section class="sec">
+  <div class="shdr"><span class="stag">03</span><h2>Cenários de execução</h2><span class="sline"></span></div>
+  <div class="sc-btns">
+    <button class="sb ok" onclick="sc('ok',this)">✅ Healthy — exit 0</button>
+    <button class="sb" onclick="sc('bad',this)">🔴 Degraded — exit 2</button>
+    <button class="sb" onclick="sc('loop',this)">🔄 Continuous loop</button>
+  </div>
+
+  <div class="sp on" id="sp-ok">
+    <div class="mrow">
+      <div class="mc"><div class="mv" style="color:var(--gr)">ACTIVE</div><div class="ml">Cell Status</div><div class="mb"><div class="mf" style="width:96%;background:var(--gr)"></div></div></div>
+      <div class="mc"><div class="mv" style="color:var(--cy)">18 dB</div><div class="ml">SINR</div><div class="mb"><div class="mf" style="width:72%;background:linear-gradient(90deg,var(--cy),var(--gr))"></div></div></div>
+      <div class="mc"><div class="mv" style="color:var(--cy)">28 ms</div><div class="ml">Latency</div><div class="mb"><div class="mf" style="width:42%;background:linear-gradient(90deg,var(--cy),var(--gr))"></div></div></div>
+      <div class="mc"><div class="mv" style="color:var(--gr)">0.35%</div><div class="ml">Packet Loss</div><div class="mb"><div class="mf" style="width:12%;background:var(--gr)"></div></div></div>
+    </div>
+    <div class="g2">
+      <div class="cw"><div class="ch"><span>./5g_agent --once</span><span class="cl">stdout</span></div>
+        <pre><span style="color:var(--pu);font-weight:700">[5G SMALL CELL AGENT]</span>
+Cell ID:   AVEIRO-SC-001
+CPU:       23.5%  <span style="color:var(--mu)">← /proc/stat</span>
+Memory:    41.2%  <span style="color:var(--mu)">← /proc/meminfo</span>
+Interface: eth0   <span style="color:var(--mu)">← /proc/net/dev</span>
+SINR:      18 dB   RSRP: -96 dBm
+Latency:   28 ms   PktLoss: 0.35%
+Status:    ACTIVE  SSH: ENABLED
+
+<span style="color:var(--gr);font-weight:700">[INFO] No alerts detected → exit 0 ✓</span></pre></div>
+      <table class="tbl">
+        <thead><tr><th>Métrica</th><th>Valor</th><th>Threshold</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td>SINR</td><td>18 dB</td><td>≥ 10 dB</td><td><span class="ok-b">OK</span></td></tr>
+          <tr><td>RSRP</td><td>-96 dBm</td><td>≥ -100</td><td><span class="ok-b">OK</span></td></tr>
+          <tr><td>Packet Loss</td><td>0.35%</td><td>≤ 1.0%</td><td><span class="ok-b">OK</span></td></tr>
+          <tr><td>Latency</td><td>28 ms</td><td>≤ 50 ms</td><td><span class="ok-b">OK</span></td></tr>
+          <tr><td>Cell Status</td><td>ACTIVE</td><td>ACTIVE</td><td><span class="ok-b">OK</span></td></tr>
+          <tr><td>SSH</td><td>ENABLED</td><td>true</td><td><span class="ok-b">OK</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sp" id="sp-bad">
+    <div class="mrow">
+      <div class="mc"><div class="mv" style="color:var(--re)">DEGRADED</div><div class="ml">Cell Status</div><div class="mb"><div class="mf" style="width:10%;background:var(--re)"></div></div></div>
+      <div class="mc"><div class="mv" style="color:var(--am)">7 dB</div><div class="ml">SINR</div><div class="mb"><div class="mf" style="width:18%;background:var(--am)"></div></div></div>
+      <div class="mc"><div class="mv" style="color:var(--am)">92 ms</div><div class="ml">Latency</div><div class="mb"><div class="mf" style="width:88%;background:var(--am)"></div></div></div>
+      <div class="mc"><div class="mv" style="color:var(--re)">2.4%</div><div class="ml">Packet Loss</div><div class="mb"><div class="mf" style="width:72%;background:var(--re)"></div></div></div>
+    </div>
+    <div class="g2">
+      <div class="cw"><div class="ch"><span>./5g_agent --once --config degraded_config.json</span><span class="cl">stdout</span></div>
+        <pre>SINR:    7 dB  <span style="color:var(--re)">⚠ &lt; 10</span>   RSRP: -112 <span style="color:var(--re)">⚠ &lt; -100</span>
+Latency: 92 ms <span style="color:var(--re)">⚠ &gt; 50</span>   PktLoss: 2.4% <span style="color:var(--re)">⚠ &gt; 1.0</span>
+Status:  DEGRADED <span style="color:var(--re)">⚠</span>  SSH: DISABLED <span style="color:var(--am)">⚠</span>
+
+<span style="color:var(--am)">[WARN]  LOW_SINR — SINR below threshold</span>
+<span style="color:var(--am)">[WARN]  WEAK_RSRP — Coverage may be poor</span>
+<span style="color:var(--am)">[WARN]  HIGH_PACKET_LOSS</span>
+<span style="color:var(--am)">[WARN]  HIGH_LATENCY</span>
+<span style="color:var(--re)">[ERROR] CELL_NOT_ACTIVE ← CRITICAL</span>
+<span style="color:var(--am)">[WARN]  SSH_DISABLED</span>
+
+<span style="color:var(--am);font-weight:700">exit 2 (6 alertas)</span></pre></div>
+      <table class="tbl">
+        <thead><tr><th>Código</th><th>Sev.</th><th>Condição</th></tr></thead>
+        <tbody>
+          <tr><td>LOW_SINR</td><td><span class="wa-b">WARN</span></td><td>7 &lt; 10 dB</td></tr>
+          <tr><td>WEAK_RSRP</td><td><span class="wa-b">WARN</span></td><td>-112 &lt; -100</td></tr>
+          <tr><td>HIGH_PACKET_LOSS</td><td><span class="wa-b">WARN</span></td><td>2.4% &gt; 1%</td></tr>
+          <tr><td>HIGH_LATENCY</td><td><span class="wa-b">WARN</span></td><td>92 &gt; 50 ms</td></tr>
+          <tr><td>CELL_NOT_ACTIVE</td><td><span class="cr-b">CRIT</span></td><td>≠ ACTIVE</td></tr>
+          <tr><td>SSH_DISABLED</td><td><span class="wa-b">WARN</span></td><td>false</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="sp" id="sp-loop">
+    <div class="cw"><div class="ch"><span>./5g_agent --config config/agent_config.json  (daemon_mode: true)</span><span class="cl">stdout — continuous</span></div>
+      <pre><span style="color:var(--mu)">[INFO] Agent entering continuous poll loop (interval=5s).</span>
+<span style="color:var(--mu)">[INFO] Send SIGTERM or SIGINT to stop.</span>
+
+<span style="color:var(--cy)">--- Poll cycle #1 ---</span>
+[5G SMALL CELL AGENT] AVEIRO-SC-001  CPU: 21.3%  SINR: 18 dB
+<span style="color:var(--gr)">[INFO] No alerts detected</span>
+
+<span style="color:var(--cy)">--- Poll cycle #2 ---</span>
+[5G SMALL CELL AGENT] AVEIRO-SC-001  CPU: 23.8%  SINR: 17 dB
+<span style="color:var(--gr)">[INFO] No alerts detected</span>
+
+<span style="color:var(--cy)">--- Poll cycle #3 ---</span>
+[5G SMALL CELL AGENT] AVEIRO-SC-001  CPU: 19.1%  SINR: 20 dB
+<span style="color:var(--gr)">[INFO] No alerts detected</span>
+
+<span style="color:var(--am)">^C   ← SIGINT recebido</span>
+<span style="color:var(--gr)">[INFO] Shutdown signal received — exiting gracefully after 3 poll cycle(s).</span>
+<span style="color:var(--gr)">[INFO] Agent execution completed → exit 0</span></pre></div>
+    <div class="highlight">
+      <div class="hl-title">Como funciona o graceful shutdown</div>
+      <div class="hl-body">SIGINT/SIGTERM chama o handler que faz <code>g_shutdown.store(true)</code>. O loop verifica o flag a cada 100ms (não usa <code>sleep(interval)</code> direto). O destructor do <code>AgentLoop</code> chama <code>stop()</code> automaticamente — RAII garante shutdown mesmo em caso de exceção.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FIRMWARE -->
+<section class="sec">
+  <div class="shdr"><span class="stag">04</span><h2>Embedded / Firmware HAL</h2><span class="sline"></span></div>
+  <div class="g2">
+    <div class="cw">
+      <div class="ch"><span>src/firmware_stub.h — register map + GPIO</span><span class="cl">C++17</span></div>
+      <pre><span class="cm">// Register map — endereços reais de SoC 5G</span>
+<span class="kw">static constexpr</span> uintptr_t REG_BASE_RADIO =
+  <span class="nu">0xFE80'0000UL</span>;
+<span class="kw">static constexpr</span> uintptr_t REG_SINR_RAW =
+  REG_BASE_RADIO + <span class="nu">0x0010</span>;
+<span class="kw">static constexpr</span> uintptr_t REG_RSRP_RAW =
+  REG_BASE_RADIO + <span class="nu">0x0014</span>;
+
+<span class="cm">// GPIO — LEDs de estado da célula</span>
+<span class="kw">static constexpr</span> <span class="ty">int</span> GPIO_CELL_ACTIVE_LED = <span class="nu">42</span>;
+<span class="kw">static constexpr</span> <span class="ty">int</span> GPIO_ALERT_LED        = <span class="nu">43</span>;
+
+<span class="cm">// HAL read — real em EMBEDDED_HW, stub em host</span>
+<span class="kw">inline</span> uint32_t <span class="fn">readRegister</span>(uintptr_t addr) {
+<span class="kw">#ifdef</span> EMBEDDED_HW
+  <span class="kw">volatile auto</span>* reg =
+    <span class="kw">reinterpret_cast</span>&lt;<span class="kw">volatile</span> uint32_t*&gt;(addr);
+  <span class="kw">return</span> *reg;
+<span class="kw">#else</span>
+  <span class="kw">return</span> <span class="nu">0u</span>; <span class="cm">// software fallback</span>
+<span class="kw">#endif</span>
+}</pre>
+    </div>
+    <div>
+      <div class="highlight">
+        <div class="hl-title">Cross-compilation ARM64</div>
+        <div class="hl-body">
+          <code>cmake .. -DTARGET_ARCH=aarch64 \</code><br>
+          <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++</code><br><br>
+          Para activar os registos reais:<br>
+          <code>cmake .. -DEMBEDDED_HW=ON</code>
         </div>
       </div>
-    </section>
+      <div class="highlight">
+        <div class="hl-title">Deployment em produção</div>
+        <div class="hl-body">Com <code>daemon_mode: true</code> no JSON, o agente corre em loop infinito. Integrado com <code>systemd</code> via unit file, o SIGTERM despoleta o shutdown gracioso e o processo termina limpo antes do timeout do watchdog.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <footer>Professional demo page · 5G Small Cell Monitoring Agent</footer>
-  </main>
+<!-- CI -->
+<section class="sec">
+  <div class="shdr"><span class="stag">05</span><h2>CI/CD Pipeline</h2><span class="sline"></span></div>
+  <div class="pipe">
+    <div class="ps">📥 Checkout</div><span class="pa">→</span>
+    <div class="ps">🔨 CMake</div><span class="pa">→</span>
+    <div class="ps">🧪 CTest (11)</div><span class="pa">→</span>
+    <div class="ps">🧪 GoogleTest (7)</div><span class="pa">→</span>
+    <div class="ps">▶️ --once healthy</div><span class="pa">→</span>
+    <div class="ps">▶️ --once degraded</div><span class="pa">→</span>
+    <div class="ps">🐍 pytest (15)</div><span class="pa">→</span>
+    <div class="ps">🔍 SonarCloud</div>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section class="sec">
+  <div class="shdr"><span class="stag">06</span><h2>Stack tecnológico</h2><span class="sline"></span></div>
+  <div class="tools">
+    <div class="tool">⚙️ C++17</div><div class="tool">🧵 std::thread</div>
+    <div class="tool">🔒 std::atomic</div><div class="tool">📦 std::unique_ptr</div>
+    <div class="tool">🐧 Linux /proc</div><div class="tool">🪟 Windows fallback</div>
+    <div class="tool">🔩 ARM64 HAL stub</div><div class="tool">🔐 SSH / popen</div>
+    <div class="tool">🐍 Python 3.12</div><div class="tool">🔑 Paramiko</div>
+    <div class="tool">📡 5G NR Metrics</div><div class="tool">🧱 CMake 3.14+</div>
+    <div class="tool">🧪 GoogleTest v1.14</div><div class="tool">🔬 pytest</div>
+    <div class="tool">🔍 SonarCloud</div><div class="tool">🐙 GitHub Actions</div>
+    <div class="tool">🐳 Docker</div><div class="tool">☸️ Kubernetes</div>
+  </div>
+</section>
+
+<footer>
+  <span>5G Small Cell Monitoring Agent v3 · Portfolio Demo</span>
+  <span style="color:var(--cy);font-family:var(--mo);font-size:11px">C++17 · RAII · SIGTERM · Linux · 5G NR</span>
+</footer>
+</div>
+
+<script>
+function sc(id,btn){
+  document.querySelectorAll('.sp').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.sb').forEach(b=>b.classList.remove('ok','bad'));
+  document.getElementById('sp-'+id).classList.add('on');
+  if(id==='ok') btn.classList.add('ok');
+  else if(id==='bad') btn.classList.add('bad');
+}
+
+const lines=[
+  {t:0,   h:'<span style="color:var(--gr)">user@aveiro-sc:~$</span> <span style="color:var(--cy2)">./5g_agent</span>'},
+  {t:500, h:'<span style="color:var(--mu)">[INFO] Continuous poll loop (interval=5s). SIGTERM to stop.</span>'},
+  {t:900, h:'<span style="color:var(--cy)">--- Poll cycle #1 ---</span>'},
+  {t:1200,h:'CPU: <span style="color:var(--gr);font-weight:700">23.5%</span> <span style="color:var(--mu)">← /proc/stat</span>  Mem: <span style="color:var(--gr);font-weight:700">41.2%</span> <span style="color:var(--mu)">← /proc/meminfo</span>'},
+  {t:1500,h:'SINR: <span style="color:var(--gr);font-weight:700">18 dB</span>  RSRP: <span style="color:var(--gr);font-weight:700">-96 dBm</span>  Status: <span style="color:var(--gr);font-weight:700">ACTIVE</span>'},
+  {t:1800,h:'<span style="color:var(--gr)">[INFO] No alerts detected</span>'},
+  {t:2400,h:'<span style="color:var(--cy)">--- Poll cycle #2 ---</span>'},
+  {t:2700,h:'CPU: <span style="color:var(--gr);font-weight:700">19.8%</span>  SINR: <span style="color:var(--gr);font-weight:700">20 dB</span>  Status: <span style="color:var(--gr);font-weight:700">ACTIVE</span>'},
+  {t:2900,h:'<span style="color:var(--gr)">[INFO] No alerts detected</span>'},
+  {t:3500,h:'<span style="color:var(--am)">^C  ← SIGINT</span>'},
+  {t:3800,h:'<span style="color:var(--gr)">[INFO] Shutdown received — 2 cycle(s). Exiting gracefully.</span>'},
+  {t:4100,h:'<span style="color:var(--gr)">user@aveiro-sc:~$</span> <span class="cur"></span>'},
+];
+const term=document.getElementById('heroTerm');
+lines.forEach(({t,h})=>{
+  setTimeout(()=>{
+    const cur=term.querySelector('.cur');
+    if(cur){const p=cur.parentElement;if(p)p.remove();}
+    const d=document.createElement('div');
+    d.innerHTML=h;term.appendChild(d);
+    term.scrollTop=term.scrollHeight;
+  },t);
+});
+</script>
 </body>
 </html>
