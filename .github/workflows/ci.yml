@@ -1,0 +1,55 @@
+name: C++ and Python CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for SonarQube blame data
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y cmake g++ python3-pip
+
+      - name: Build C++ agent and all tests
+        run: |
+          rm -rf build && mkdir build && cd build
+          cmake .. -DENABLE_GTEST=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          cmake --build .
+
+      - name: Run CTest (NetworkMonitor + AgentLoop)
+        run: cd build && ctest --output-on-failure
+
+      - name: Run healthy scenario (--once)
+        run: ./build/5g_agent --once --config config/agent_config.json
+
+      - name: Run degraded scenario (--once, expect exit 2)
+        run: ./build/5g_agent --once --config config/degraded_config.json || test $? -eq 2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: python3 -m pip install --upgrade pip && python3 -m pip install -r requirements.txt
+
+      - name: Run Python tests
+        run: python3 -m pytest tests/ -v
+
+      - name: SonarCloud scan
+        uses: SonarSource/sonarcloud-github-action@master
+        if: ${{ env.SONAR_TOKEN != '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.cfamily.compile-commands=build/compile_commands.json
